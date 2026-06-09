@@ -8,8 +8,9 @@
       <div class="avatar">
         {{ getInitials(currentUser.name) }}
       </div>
-      <span class="profile-name">{{ currentUser.name }}</span>
+      <span v-if="!props.compact" class="profile-name">{{ currentUser.name }}</span>
       <svg
+        v-if="!props.compact"
         class="chevron"
         :class="{ 'chevron-open': isDropdownOpen }"
         width="16"
@@ -78,6 +79,13 @@ import { ref, computed } from 'vue'
 import { useAuth } from '../composables/useAuth'
 import { useI18n } from '../composables/useI18n'
 
+const props = defineProps({
+  compact: {
+    type: Boolean,
+    default: false
+  }
+})
+
 const { currentUser, logout, getInitials } = useAuth()
 const { t } = useI18n()
 
@@ -124,18 +132,19 @@ const handleLogout = () => {
   display: flex;
   align-items: center;
   gap: 0.625rem;
-  padding: 0.5rem 0.875rem;
-  background: white;
-  border: 1px solid #e2e8f0;
+  padding: 0.5rem 0.625rem;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s ease;
   font-family: inherit;
+  width: 100%;
 }
 
 .profile-button:hover {
-  background: #f8fafc;
-  border-color: #cbd5e1;
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.18);
 }
 
 .avatar {
@@ -153,14 +162,21 @@ const handleLogout = () => {
 }
 
 .profile-name {
-  font-size: 0.875rem;
+  font-size: 0.8125rem;
   font-weight: 500;
-  color: #0f172a;
+  color: #94a3b8;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+  min-width: 0;
+  text-align: left;
 }
 
 .chevron {
-  color: #64748b;
+  color: #475569;
   transition: transform 0.2s ease;
+  flex-shrink: 0;
 }
 
 .chevron-open {
@@ -168,9 +184,9 @@ const handleLogout = () => {
 }
 
 .dropdown-menu {
-  position: absolute;
-  top: calc(100% + 0.5rem);
-  right: 0;
+  position: fixed;
+  bottom: 1rem;
+  left: calc(100% + 0.5rem);
   min-width: 280px;
   background: white;
   border: 1px solid #e2e8f0;
